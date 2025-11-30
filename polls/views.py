@@ -26,6 +26,42 @@ def criar_curriculo(request):
 
         return JsonResponse({"message": "Currículo criado com sucesso!"})
 
+def obter_curriculo(request, curriculum_id):
+    """Pega o currículo do banco de dados pelo ID."""
+    curriculo = Curriculum.objects.get(id=curriculum_id)
+    curriculo_data = {
+        "name": curriculo.name,
+        "area": curriculo.area,
+        "resumo": curriculo.resumo,
+        "competencias": curriculo.competencias,
+        "educacao": curriculo.educacao,
+    }
+    return JsonResponse(curriculo_data)
+
+@csrf_exempt
+def editar_curriculo(request, curriculum_id):
+    """Edita o currículo no banco de dados pelo ID."""
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        curriculo = Curriculum.objects.get(id=curriculum_id)
+
+        curriculo.name = data.get("name", curriculo.name)
+        curriculo.area = data.get("area", curriculo.area)
+        curriculo.resumo = data.get("resumo", curriculo.resumo)
+        curriculo.competencias = data.get("competencias", curriculo.competencias)
+        curriculo.educacao = data.get("educacao", curriculo.educacao)
+        curriculo.save()
+
+        return JsonResponse({"message": "Currículo atualizado com sucesso!"})
+    
+@csrf_exempt
+def deletar_curriculo(request, curriculum_id):
+    """Deleta o currículo do banco de dados pelo ID."""
+    if request.method == "DELETE":
+        curriculo = Curriculum.objects.get(id=curriculum_id)
+        curriculo.delete()
+        return JsonResponse({"message": "Currículo deletado com sucesso!"})
+
 @csrf_exempt
 def criar_vaga(request):
     if request.method == "POST":
