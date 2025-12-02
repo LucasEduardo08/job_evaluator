@@ -1,15 +1,94 @@
-from django.shortcuts import render
+from pyexpat.errors import messages
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import JsonResponse
 from .models import Curriculum, Job, User
 from django.views.decorators.csrf import csrf_exempt
 import json
+
+from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+from .forms import ResumeUploadForm, SimpleRegisterForm
 from src.pipeline.evaluator import analyze_resume
 
 def index(request):
     return HttpResponse("Yaaaaayayyyayya!")
 
-# Create your views here
+
+# Tela de Cadastro
+def register_view(request):
+    if request.method == 'POST':
+        form = SimpleRegisterForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            
+            user = User.objects.create_user(username=email, email=email, password=password)
+            
+            login(request, user)
+            
+            return redirect('upload')
+    else:
+        form = SimpleRegisterForm()
+        
+    return render(request, 'register.html', {'form': form})
+
+# Tela de Login
+def login_view(request):
+    if request.method == 'POST':
+        email_digitado = request.POST.get('email')
+        senha_digitada = request.POST.get('password')
+
+        try:
+            # Tenta achar o usuário que tem esse email
+            usuario_encontrado = User.objects.get(email=email_digitado)
+            
+            # Se achou, pega o username para validar a senha            
+            user = authenticate(username=usuario_encontrado.username, password=senha_digitada)
+
+            if user is not None:
+                login(request, user)
+                return redirect('upload') # Ou para onde ir depois de logar
+            else:
+                messages.error(request, 'Senha incorreta!')
+
+        except User.DoesNotExist:
+            # Se não achou ninguém
+            messages.error(request, 'Email não cadastrado!')
+
+    return render(request, 'login.html')
+
+# Logout
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+# Tela de Upload e Pontuação
+@login_required(login_url='/login/')
+def upload_view(request):
+    if request.method == 'POST':
+        form = ResumeUploadForm(request.POST)
+        
+        if form.is_valid():
+            vaga = form.cleaned_data['job_description']
+            texto_curriculo = form.cleaned_data['resume_text']
+            
+            
+            score = analyze_resume(texto_curriculo, vaga)
+            
+            return render(request, 'score.html', {
+                'score': score
+            })
+                
+            
+                
+    else:
+        form = ResumeUploadForm()
+
+    return render(request, 'upload.html', {'form': form})
+
 
 @csrf_exempt
 def criar_curriculo(request):

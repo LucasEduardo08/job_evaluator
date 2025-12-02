@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultado</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+    </style>
+</head>
+<body>
+    <h1>Resultado da Análise</h1>
+
+    <div>
+        {{ score }}%
+    </div>
+
+    <br><br>
+    <a href="{% url 'upload' %}">Analisar outro currículo</a>
+</body>
+</html>
