@@ -4,12 +4,11 @@ __pycache__/
 
 # Django
 db.sqlite3
+*.log
 
-# Ambiente virtual
+# Virtual env
 venv/
-venvJobEvaluator/
+.venv/
 
-# IDE
+# VSCode
 .vscode/
-.idea/
-anotacoes.txt
