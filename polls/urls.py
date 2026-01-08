@@ -3,7 +3,6 @@ from polls.views.auth_views import LoginView, RefreshView
 
 from polls.views.curriculo_views import TesteProtegidoView
 
-
 urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("refresh/", RefreshView.as_view(), name="refresh"),

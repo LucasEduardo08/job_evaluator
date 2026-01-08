@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enviar Currículo</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: auto; border: 1px solid #ccc; padding: 20px; }
+        textarea { width: 100%; height: 100px; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <p>Logado como: {{ request.user }} | <a href="{% url 'logout' %}">Sair</a></p>
+        <hr>
+        
+        <h2>Analisador de Currículos</h2>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <p>
+                <label>Descrição da Vaga:</label><br>
+                {{ form.job_description }}
+            </p>
+
+            <p>
+                <label>Currículo:</label><br>
+                {{ form.resume_text }}
+            </p>
+
+            <div style="color: red;">
+                {{ form.errors }}
+            </div>
+
+            <button type="submit">Calcular Compatibilidade</button>
+        </form>
+    </div>
+</body>
+</html>
