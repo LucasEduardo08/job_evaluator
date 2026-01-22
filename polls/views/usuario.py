@@ -13,7 +13,7 @@ import json
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def cadastrar_usuario(request):
-    data = request.data  # ← aqui está o fix
+    data = request.data
 
     username = data.get("username")
     email = data.get("email")
@@ -42,7 +42,7 @@ def cadastrar_usuario(request):
         nome=data.get("nome"),
         telefone=data.get("telefone"),
         endereco=data.get("endereco"),
-        data_nascimento=data.get("data_nascimento")  # agora vai vir certo
+        data_nascimento=data.get("data_nascimento")
     )
 
     return Response(
