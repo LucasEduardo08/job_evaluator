@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
+import uuid
+from django.db import models
+from django.utils import timezone
+from datetime import timedelta
 
 
 class Usuario(models.Model):
@@ -65,3 +69,14 @@ class Educacao(models.Model):
     data_inicio               = models.DateField()
     data_conclusao            = models.DateField()
     curriculo                 = models.ForeignKey(Curriculo, on_delete=models.CASCADE)
+
+
+class PasswordResetToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.UUIDField(default=uuid.uuid4, unique=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    def expirado(self):
+        return timezone.now() > self.criado_em + timedelta(hours=1)
+
+    

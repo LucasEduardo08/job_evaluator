@@ -1,13 +1,15 @@
-from django.shortcuts import render
-from django.http import HttpResponse
 from django.http import JsonResponse
-from polls.models import Usuario
+from polls.models import Usuario, PasswordResetToken
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-import json
+from django.core.mail import send_mail
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.conf import settings
+from django.contrib.auth.hashers import make_password
 
 
 @api_view(["POST"])
@@ -98,3 +100,54 @@ def deletar_usuario(request):
     user.delete()
 
     return JsonResponse({"message": "Usuário deletado com sucesso!"})
+
+
+@api_view(["POST"])
+def solicitar_reset_senha(request):
+    email = request.data.get("email")
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        # Segurança: não revelar se o email existe
+        return Response(
+            {"message": "Se o email existir, enviaremos instruções."},
+            status=200
+        )
+
+    token = PasswordResetToken.objects.create(user=user)
+
+    link = f"http://localhost:8501/resetar-senha?token={token.token}"
+
+    send_mail(
+        subject="Redefinição de senha",
+        message=f"Clique no link para redefinir sua senha:\n{link}",
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[email],
+        fail_silently=False,
+    )
+
+    return Response({"message": "Email enviado com sucesso!"})
+
+
+@api_view(["POST"])
+def redefinir_senha(request):
+    token_str = request.data.get("token")
+    nova_senha = request.data.get("nova_senha")
+
+    try:
+        token = PasswordResetToken.objects.get(token=token_str)
+    except PasswordResetToken.DoesNotExist:
+        return Response({"error": "Token inválido"}, status=400)
+
+    if token.expirado():
+        return Response({"error": "Token expirado"}, status=400)
+
+    user = token.user
+    user.set_password(nova_senha)
+    user.save()
+
+    token.delete()
+
+    return Response({"message": "Senha atualizada com sucesso!"})
+
