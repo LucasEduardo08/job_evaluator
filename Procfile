@@ -1,0 +1,1 @@
+web: gunicorn job_evaluator.wsgi:application
