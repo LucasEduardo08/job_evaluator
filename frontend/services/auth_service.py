@@ -37,10 +37,11 @@ def criar_conta(username, password, email, nome, telefone, endereco, data_nascim
             timeout=10
         )
 
-        if response.status_code == 201:
-            return True
-        else:
-            return False
-    except:
+        print("STATUS:", response.status_code)
+        print("BODY:", response.text)
+
+        return response.status_code == 201
+
+    except Exception as e:
+        print("ERRO NA REQUEST:", e)
         return False
-    
