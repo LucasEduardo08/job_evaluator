@@ -1,1 +1,1 @@
-web: gunicorn job_evaluator.wsgi:application
+web: python manage.py migrate && gunicorn job_evaluator.wsgi:application
