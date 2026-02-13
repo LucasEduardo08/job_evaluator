@@ -63,5 +63,8 @@ O sistema foi desenvolvido seguindo separação de responsabilidades:
 ## 👨‍💻 Autor
 
 Lucas Eduardo Pereira Teles  
-Engenharia de Computação  
 LinkedIn: www.linkedin.com/in/lucas-eduardo-pereira-teles-211093226
+
+Gustavo Faraco
+
+Miguel Angelo Oliveira dos Santos
