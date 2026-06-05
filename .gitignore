@@ -18,3 +18,9 @@ anotacoes.txt
 
 # Variáveis de ambiente
 .env
+
+# Pytest
+.pytest_cache
+
+# Migrações 
+backend/polls/migrations

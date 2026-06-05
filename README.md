@@ -49,7 +49,7 @@ O sistema foi desenvolvido seguindo separação de responsabilidades:
 5. Rode as migrações:
 - python manage.py migrate
 6. Execute o servidor:
-- python manage.py runserver
+- python backend/manage.py runserver
 7. Execute o frontend em outro terminal:
 - streamlit run frontend/app.py
 
